@@ -7,6 +7,7 @@ import Loading from "../../commum/loading";
 import Mensagem from "../../commum/mensagem";
 import api from "../../api";
 import axios from "axios";
+import { useAuth } from "./auth";
 
 export default function Login(){
 
@@ -28,6 +29,7 @@ export default function Login(){
             const data = response.data
             setType(data.type)
             setMensagem(data.mensagem)
+            navigate("/menu")
         }catch(error){
             if (axios.isAxiosError(error)) {
                 const data = error.response?.data;
@@ -38,6 +40,12 @@ export default function Login(){
     const handleRegister = () =>{
         navigate("/register")
     }
+
+    const { verifyAuth } = useAuth();
+    useEffect(() => {
+        verifyAuth();
+    }, []);
+    
     useEffect(()=>{
         setLoading(false)
         let intervalo = setTimeout(() => {
