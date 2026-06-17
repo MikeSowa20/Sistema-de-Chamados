@@ -5,6 +5,8 @@ from flask_cors import CORS
 from routes.login import login_bp
 from routes.register import register_bp
 from routes.auth import auth_bp
+from routes.usuarios import usuarios_bp
+from routes.chamados import chamados_bp
 
 app = Flask(__name__)
 
@@ -19,6 +21,8 @@ db.init_app(app)
 app.register_blueprint(login_bp)
 app.register_blueprint(register_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(usuarios_bp)
+app.register_blueprint(chamados_bp)
 
 with app.app_context():
     db.create_all()

@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+.rich-text-editor p,
+.rich-text-content p {
+  margin: 0.35rem 0;
+}
+
+.rich-text-editor ul,
+.rich-text-content ul {
+  margin: 0.5rem 0;
+  padding-left: 1.35rem;
+  list-style: disc;
+}
+
+.rich-text-editor ol,
+.rich-text-content ol {
+  margin: 0.5rem 0;
+  padding-left: 1.35rem;
+  list-style: decimal;
+}
+
+.rich-text-editor a,
+.rich-text-content a {
+  color: #0f766e;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.rich-text-editor img,
+.rich-text-content img {
+  max-width: 100%;
+  max-height: 360px;
+  margin: 0.5rem 0;
+  border: 1px solid #d1d5db;
+  object-fit: contain;
+}
+
+.rich-text-editor blockquote,
+.rich-text-content blockquote {
+  margin: 0.75rem 0;
+  border-left: 3px solid #0f766e;
+  padding-left: 0.75rem;
+  color: #4b5563;
+}
+
+.rich-text-editor:empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  pointer-events: none;
+}

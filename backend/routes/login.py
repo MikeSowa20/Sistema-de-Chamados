@@ -13,9 +13,17 @@ login_bp = Blueprint ("login",__name__)
 def login():
     bcrypt = Bcrypt()
     dados = request.json
+    email = (dados.get("email") or "").strip().lower() if dados else ""
+    password = dados.get("password") if dados else ""
 
-    usuario = Users.query.filter_by(
-        email=dados["email"],
+    if not email or not password:
+        return jsonify({
+            "mensagem": "Informe e-mail e senha",
+            "type": "error"
+        }), 400
+
+    usuario = Users.query.filter(
+        db.func.lower(Users.email) == email,
     ).first()
     if not usuario:
         return jsonify({
@@ -25,7 +33,7 @@ def login():
 
     if bcrypt.check_password_hash(
         usuario.password,
-        dados["password"]
+        password
     ):
         SECRET_KEY = os.getenv("SECRET_KEY")
         token = jwt.encode(
@@ -57,5 +65,4 @@ def login():
             "mensagem": "Senha ou usuario inválidos",
             "type": "error"
         }),401
-
         

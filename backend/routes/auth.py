@@ -2,6 +2,8 @@ from flask import request, jsonify
 from flask import Blueprint
 import os
 import jwt
+from models.users import Users
+from config.db import db
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -21,10 +23,17 @@ def auth():
             algorithms=["HS256"]
         )
 
+        usuario = db.session.get(Users, payload["user_id"])
+
+        if not usuario:
+            return jsonify({"logged": False, "erro": "Usuário não encontrado"}), 401
+
         return jsonify({
             "logged":True,
             "user_id":payload["user_id"],
-            "email":payload["email"]
+            "email":payload["email"],
+            "permissao":usuario.permissao,
+            "nome":usuario.nome
         }),200
     
     except jwt.ExpiredSignatureError:
@@ -32,3 +41,16 @@ def auth():
 
     except jwt.InvalidTokenError:
         return jsonify({"logged": False, "erro": "Token inválido"}), 401
+
+
+
+@auth_bp.route("/logout", methods=["POST"])
+def logout():
+
+    response = jsonify({
+        "mensagem": "Logout realizado"
+    })
+
+    response.delete_cookie("token")
+
+    return response, 200

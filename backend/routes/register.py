@@ -10,15 +10,33 @@ bcrypt = Bcrypt()
 @register_bp.route("/register", methods=["POST"])
 def register():
     dados = request.json
+    nome = (dados.get("nome") or "").strip() if dados else ""
+    email = (dados.get("email") or "").strip().lower() if dados else ""
+    password = dados.get("password") if dados else ""
+
+    if not nome or not email or not password:
+        return jsonify({
+            "mensagem": "Preencha nome, e-mail e senha",
+            "type": "error"
+        }), 400
+
+    usuario_existente = Users.query.filter(
+        db.func.lower(Users.email) == email,
+    ).first()
+    if usuario_existente:
+        return jsonify({
+            "mensagem": "E-mail já cadastrado",
+            "type": "error"
+        }), 409
 
     senha_hash = bcrypt.generate_password_hash(
-        dados["password"]
+        password
     ).decode("utf-8")
 
     usuario = Users(
-        email=dados["email"],
+        email=email,
         password=senha_hash,    
-        nome=dados["nome"]
+        nome=nome
     )
 
     db.session.add(usuario)

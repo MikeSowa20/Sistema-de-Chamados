@@ -1,6 +1,6 @@
 import Input from "../../commum/input"
 import Buttom from "../../commum/buttom";
-import { FaUser} from "react-icons/fa";
+import { FaHeadset, FaUser} from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../commum/loading";
@@ -23,7 +23,7 @@ export default function Login(){
         setLoading(true)
         try{
             const response = await api.post("/login",{
-                email: email,
+                email: email.trim().toLowerCase(),
                 password: password,
             });
             const data = response.data
@@ -43,7 +43,7 @@ export default function Login(){
 
     const { verifyAuth } = useAuth();
     useEffect(() => {
-        verifyAuth();
+        verifyAuth(true);
     }, []);
     
     useEffect(()=>{
@@ -57,36 +57,53 @@ export default function Login(){
     },[mensagem])
 
     return(
-        <div className="flex justify-center items-center min-h-screen ">
+        <div className="flex min-h-screen items-center justify-center bg-[#eef2f5] p-4">
             {loading && <Loading/>}
             {mensagem && <Mensagem
                 mensagem={mensagem}
                 type={type}
             />}
-            <div className="w-[60vw] h-[70vh] bg-gray-100 shadow-xl grid grid-cols-5">
-                <div className="col-span-3 w-full h-full">
-
+            <div className="grid min-h-[620px] w-full max-w-5xl overflow-hidden border border-gray-200 bg-white shadow-xl md:grid-cols-5">
+                <div className="hidden bg-teal-700 p-10 text-white md:col-span-3 md:flex md:flex-col md:justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-11 w-11 items-center justify-center bg-white text-teal-700">
+                            <FaHeadset />
+                        </div>
+                        <div>
+                            <p className="text-lg font-bold">Central de Chamados</p>
+                            <p className="text-sm text-teal-50">Atendimento organizado para toda a equipe</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-bold">Acesse sua fila de suporte com clareza.</h2>
+                        <p className="mt-3 max-w-md text-sm leading-6 text-teal-50">
+                            Abra chamados, acompanhe respostas e mantenha o histórico de atendimento em um fluxo simples.
+                        </p>
+                    </div>
                 </div>
-                <div className="col-span-2 border-l border-gray-200 shadow-xl w-full h-full px-10 py-20">
-                    <h1 className="text-3xl text-gray-900 font-bold">Login</h1>
-                    <Input
-                        placeHolder="Insira o seu e-mail"
-                        type="email"
-                        label="E-mail"
-                        icon={<FaUser />}
-                        value={email}
-                        onChange={((e) => setEmail(e.target.value))}
-                    />
-                    <Input
-                        placeHolder="Insira a sua senha"
-                        type="password"
-                        label="Senha"
-                        value={password}
-                        onChange={((e) => setPassword(e.target.value))}
-                    />
-                    <p className="text-sm text-gray-800">
+                <div className="flex w-full flex-col justify-center px-6 py-10 md:col-span-2 md:px-10">
+                    <p className="text-sm font-bold text-teal-700">Bem-vindo</p>
+                    <h1 className="text-3xl font-bold text-gray-950">Login</h1>
+                    <div className="mt-8 space-y-4">
+                        <Input
+                            placeHolder="Insira o seu e-mail"
+                            type="email"
+                            label="E-mail"
+                            icon={<FaUser />}
+                            value={email}
+                            onChange={((e) => setEmail(e.target.value))}
+                        />
+                        <Input
+                            placeHolder="Insira a sua senha"
+                            type="password"
+                            label="Senha"
+                            value={password}
+                            onChange={((e) => setPassword(e.target.value))}
+                        />
+                    </div>
+                    <p className="mt-4 text-sm text-gray-600">
                         Caso não tenha um usuario criado, 
-                        <span className="text-blue-800 cursor-pointer hover:text-blue-600 p-1"
+                        <span className="cursor-pointer p-1 font-bold text-teal-700 hover:text-teal-900"
                             onClick={handleRegister}>
                             registre-se.
                         </span>
@@ -95,6 +112,7 @@ export default function Login(){
                         <Buttom
                             text="Login"
                             onClick={(e) => handleSubmit(e)}
+                            className="bg-teal-700 hover:bg-teal-800"
                         />
                     </div>
                 </div>

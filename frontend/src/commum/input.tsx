@@ -16,11 +16,11 @@ export default function Input({ value, onChange, placeHolder, type, label, icon 
 
     if (type == "password") {
         return (
-            <div>
-                <label htmlFor="input" className="text-gray-900">{label}:</label>
-                <div className="flex relative">
+            <div className="space-y-1">
+                <label htmlFor="input" className="text-sm font-bold text-gray-800">{label}</label>
+                <div className="relative flex">
                     <input
-                        className="w-full border-b border-gray-400 focus:outline-0 pt-1"
+                        className="w-full border border-gray-300 bg-white px-3 py-2 pr-10 text-gray-900 focus:border-teal-700 focus:outline-0"
                         id="input"
                         onChange={onChange}
                         value={value}
@@ -30,7 +30,7 @@ export default function Input({ value, onChange, placeHolder, type, label, icon 
                     />
 
                     <span 
-                        className="absolute top-2 right-0 text-gray-500 text-md, hover:cursor-pointer" 
+                        className="absolute right-3 top-3 text-gray-500 hover:cursor-pointer hover:text-gray-900" 
                         onClick={()=>setEye(!eye)}
                     >
                         {eye ? <FaEye />: <FaEyeSlash />}
@@ -41,11 +41,11 @@ export default function Input({ value, onChange, placeHolder, type, label, icon 
         )
     }
     return (
-        <div>
-            <label htmlFor="input" className="text-gray-900">{label}:</label>
-            <div className="flex relative">
+        <div className="space-y-1">
+            <label htmlFor="input" className="text-sm font-bold text-gray-800">{label}</label>
+            <div className="relative flex">
                 <input
-                    className="w-full border-b border-gray-400 focus:outline-0 pt-1"
+                    className="w-full border border-gray-300 bg-white px-3 py-2 pr-10 text-gray-900 focus:border-teal-700 focus:outline-0"
                     id="input"
                     onChange={onChange}
                     value={value}
@@ -53,7 +53,7 @@ export default function Input({ value, onChange, placeHolder, type, label, icon 
                     type={type}
                 />
 
-                <span className="absolute top-2 right-0 text-gray-500 text-md">
+                <span className="absolute right-3 top-3 text-gray-500">
                     {icon}
                 </span>
             </div>
