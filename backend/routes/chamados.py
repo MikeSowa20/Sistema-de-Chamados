@@ -4,8 +4,24 @@ from datetime import datetime, timezone
 from config.db import db
 from models.users import Users
 from models.chamados import Chamados, MensagensChamado
+from sqlalchemy import or_, and_
 
 chamados_bp = Blueprint("chamados",__name__)
+
+def converter_data_parametro(valor, fim_do_dia=False):
+    if not valor:
+        return None
+
+    try:
+        data = datetime.strptime(valor, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+
+        if fim_do_dia:
+            return data.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        return data
+
+    except ValueError:
+        return None
 
 def formatar_data(data):
     return data.isoformat() if data else None
@@ -116,7 +132,36 @@ def atualizarChamados(user_id):
 
 @chamados_bp.route("/menu/chamados/admin/atualizar",methods=["GET"])
 def atualizarChamadosAdmin():
-    chamados = Chamados.query.order_by(Chamados.criado_em.desc()).all()
+    data_inicio_param = request.args.get("data_inicio")
+    data_fim_param = request.args.get("data_fim")
+    filtro = request.args.get("filtro")
+
+    data_inicio = converter_data_parametro(data_inicio_param)
+    data_fim = converter_data_parametro(data_fim_param, fim_do_dia=True)
+
+    query = Chamados.query
+
+    filtros = []
+
+    if data_inicio and data_fim:
+        filtros.append(
+            or_(
+                Chamados.status == "aberto",
+                and_(
+                    Chamados.status.in_(["resolvido", "encerrado"]),
+                    Chamados.atualizado_em >= data_inicio,
+                    Chamados.atualizado_em <= data_fim
+                )
+            )
+        )
+
+    if filtro and filtro != "todos":
+        filtros.append(Chamados.urgencia == filtro)
+
+    if filtros:
+        query = query.filter(and_(*filtros))
+
+    chamados = query.order_by(Chamados.criado_em.desc()).all()
 
     return jsonify({
         "chamados": [

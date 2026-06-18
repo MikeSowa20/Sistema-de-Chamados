@@ -1,15 +1,8 @@
-import { useEffect } from "react";
-import { useAuth } from "../login/auth";
 import { Outlet } from "react-router-dom";
 
 import NavBar from "./componentes/navbar";
 
 export default function Menu(){
-
-    const { verifyAuth } = useAuth();
-    useEffect(() => {
-        verifyAuth();
-    }, []);
 
     return(
         <div className="flex h-screen w-screen items-center justify-center bg-[#eef2f5] p-4">

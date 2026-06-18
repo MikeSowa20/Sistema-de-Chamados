@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react"
+import { useEffect, useMemo, useState, type FormEvent } from "react"
 import { FaEye, FaPaperPlane, FaRegClock, FaReply, FaTimes, FaUserCircle } from "react-icons/fa";
 import Mensagem from "../../../commum/mensagem";
 import api from "../../../api"
@@ -100,10 +100,76 @@ const ultimaMensagem = (chamado: ChamadoAdmin) => {
     return chamado.respostas.at(-1);
 }
 
+const formatarDataInput = (data: Date) => {
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
+    const dia = String(data.getDate()).padStart(2, "0");
+
+    return `${ano}-${mes}-${dia}`;
+}
+
+const formatarDataTela = (data: string) => {
+    if (!data) return "Não informado";
+
+    const [ano, mes, dia] = data.split("-");
+
+    return `${dia}/${mes}/${ano}`;
+}
+
+const somarDias = (data: Date, dias: number) => {
+    const novaData = new Date(data);
+    novaData.setDate(novaData.getDate() + dias);
+
+    return novaData;
+}
+
+const hojeInput = () => formatarDataInput(new Date());
+
+const inicioMesInput = () => {
+    const agora = new Date();
+    const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1);
+
+    return formatarDataInput(inicioMes);
+}
+
+const periodos = [
+    { id: "mes", label: "Deste mês" },
+    { id: "hoje", label: "Hoje" },
+    { id: "7", label: "Últimos 7 dias" },
+    { id: "30", label: "Últimos 30 dias" },
+    { id: "90", label: "Últimos 90 dias" },
+    { id: "custom", label: "Personalizado" },
+];
+
+const filtrosUrgencia = [
+    { value: "todos", label: "Todas as urgências" },
+    { value: "baixa", label: "Baixa" },
+    { value: "media", label: "Média" },
+    { value: "alta", label: "Alta" },
+    { value: "urgente", label: "Urgente" },
+];
+
+const obterIntervalo = (periodo: string, inicioPersonalizado: string, fimPersonalizado: string) => {
+    const hoje = new Date();
+
+    if (periodo === "mes") return { dataInicio: inicioMesInput(), dataFim: hojeInput() };
+    if (periodo === "hoje") return { dataInicio: hojeInput(), dataFim: hojeInput() };
+    if (periodo === "custom") return { dataInicio: inicioPersonalizado, dataFim: fimPersonalizado };
+
+    return {
+        dataInicio: formatarDataInput(somarDias(hoje, -Number(periodo))),
+        dataFim: hojeInput(),
+    };
+}
+
 export default function ChamadosAdmin({nome, user_id}:chamadosAdminProps){
     const [chamados, setChamados] = useState<ChamadoAdmin[]>([]);
     const [carregando, setCarregando] = useState(true);
     const [statusVisivel, setStatusVisivel] = useState("aberto");
+    const [periodo, setPeriodo] = useState("mes");
+    const [inicioPersonalizado, setInicioPersonalizado] = useState(formatarDataInput(somarDias(new Date(), -7)));
+    const [fimPersonalizado, setFimPersonalizado] = useState(hojeInput());
+    const [filtroUrgencia, setFiltroUrgencia] = useState("todos");
     const [chamadoRespondendo, setChamadoRespondendo] = useState<number | null>(null);
     const [respostas, setRespostas] = useState<Record<number, string>>({});
     const [statusEditando, setStatusEditando] = useState<Record<number, string>>({});
@@ -116,10 +182,17 @@ export default function ChamadosAdmin({nome, user_id}:chamadosAdminProps){
     const chamadosFiltrados = chamados.filter((chamado) => chamado.status === statusVisivel);
     const statusAtual = statusChamado.find((status) => status.value === statusVisivel);
     const labelStatusAtual = statusAtual?.label.toLowerCase() ?? "selecionado";
+    const intervalo = useMemo(() => (
+        obterIntervalo(periodo, inicioPersonalizado, fimPersonalizado)
+    ), [periodo, inicioPersonalizado, fimPersonalizado]);
+    const periodoAtual = periodos.find((item) => item.id === periodo)?.label ?? "Período";
+    const filtroAtual = filtrosUrgencia.find((item) => item.value === filtroUrgencia)?.label ?? "Todas as urgências";
 
     const carregarChamados = async () => {
         try{
-            const response = await api.get("/menu/chamados/admin/atualizar")
+            const response = await api.get(
+                `/menu/chamados/admin/atualizar?data_inicio=${intervalo.dataInicio}&data_fim=${intervalo.dataFim}&filtro=${filtroUrgencia}`
+            )
             setChamados(response.data.chamados ?? []);
         }catch(error){
             console.error(error)
@@ -130,7 +203,7 @@ export default function ChamadosAdmin({nome, user_id}:chamadosAdminProps){
 
     useEffect(()=>{
         carregarChamados()
-    },[])
+    },[intervalo.dataInicio, intervalo.dataFim, filtroUrgencia])
 
     useEffect(() => {
         if (!mensagem) return;
@@ -264,10 +337,79 @@ export default function ChamadosAdmin({nome, user_id}:chamadosAdminProps){
         <div className="space-y-6">
             {mensagem && <Mensagem mensagem={mensagem} type={type} />}
 
-            <div className="flex flex-col gap-2 border-b border-gray-200 pb-5">
-                <p className="text-sm font-bold text-teal-700">Olá, {nome}</p>
-                <h1 className="text-2xl font-bold text-gray-950">Painel de chamados</h1>
-                <p className="text-sm text-gray-500">Acompanhe filas, responda solicitações e mova chamados entre etapas.</p>
+            <div className="flex flex-col gap-4 border-b border-gray-200 pb-5 xl:flex-row xl:items-end xl:justify-between">
+                <div>
+                    <p className="text-sm font-bold text-teal-700">Olá, {nome}</p>
+                    <h1 className="text-2xl font-bold text-gray-950">Painel de chamados</h1>
+                    <p className="text-sm text-gray-500">Abertos aparecem sempre; resolvidos e encerrados respeitam o período escolhido.</p>
+                </div>
+
+                <div className="flex flex-col gap-2 md:flex-row md:items-end">
+                    <div>
+                        <label htmlFor="periodo-chamados" className="block text-xs font-bold uppercase text-gray-500">
+                            Período
+                        </label>
+                        <select
+                            id="periodo-chamados"
+                            value={periodo}
+                            onChange={(event) => setPeriodo(event.target.value)}
+                            className="mt-1 min-w-48 border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-gray-800 focus:border-teal-700 focus:outline-0"
+                        >
+                            {periodos.map((item) => (
+                                <option key={item.id} value={item.id}>
+                                    {item.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="filtro-urgencia" className="block text-xs font-bold uppercase text-gray-500">
+                            Urgência
+                        </label>
+                        <select
+                            id="filtro-urgencia"
+                            value={filtroUrgencia}
+                            onChange={(event) => setFiltroUrgencia(event.target.value)}
+                            className="mt-1 min-w-44 border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-gray-800 focus:border-teal-700 focus:outline-0"
+                        >
+                            {filtrosUrgencia.map((item) => (
+                                <option key={item.value} value={item.value}>
+                                    {item.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {periodo === "custom" && (
+                        <div className="grid grid-cols-2 gap-2">
+                            <div>
+                                <label htmlFor="chamados-data-inicio" className="block text-xs font-bold uppercase text-gray-500">
+                                    De
+                                </label>
+                                <input
+                                    id="chamados-data-inicio"
+                                    type="date"
+                                    value={inicioPersonalizado}
+                                    onChange={(event) => setInicioPersonalizado(event.target.value)}
+                                    className="mt-1 w-40 border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-gray-800 focus:border-teal-700 focus:outline-0"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="chamados-data-fim" className="block text-xs font-bold uppercase text-gray-500">
+                                    Até
+                                </label>
+                                <input
+                                    id="chamados-data-fim"
+                                    type="date"
+                                    value={fimPersonalizado}
+                                    onChange={(event) => setFimPersonalizado(event.target.value)}
+                                    className="mt-1 w-40 border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-gray-800 focus:border-teal-700 focus:outline-0"
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="space-y-3">
@@ -275,7 +417,7 @@ export default function ChamadosAdmin({nome, user_id}:chamadosAdminProps){
                     <div>
                         <h2 className="text-lg font-bold text-gray-950">Fila de atendimento</h2>
                         <p className="text-sm text-gray-500">
-                            Exibindo: {statusAtual?.label ?? "Chamados"}
+                            Exibindo: {statusAtual?.label ?? "Chamados"} | {periodoAtual}: {formatarDataTela(intervalo.dataInicio)} até {formatarDataTela(intervalo.dataFim)} | {filtroAtual}
                         </p>
                     </div>
                     <span className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600">

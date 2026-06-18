@@ -7,6 +7,7 @@ from routes.register import register_bp
 from routes.auth import auth_bp
 from routes.usuarios import usuarios_bp
 from routes.chamados import chamados_bp
+from routes.dashboard import dashboard_bp
 
 app = Flask(__name__)
 
@@ -23,6 +24,7 @@ app.register_blueprint(register_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(usuarios_bp)
 app.register_blueprint(chamados_bp)
+app.register_blueprint(dashboard_bp)
 
 with app.app_context():
     db.create_all()
