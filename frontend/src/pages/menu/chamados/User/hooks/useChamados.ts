@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import api from "../../../../api";
-import { sanitizeRichText, isRichTextEmpty } from "../../../../commum/richText";
+import api from "../../../../../api";
+import { sanitizeRichText, isRichTextEmpty } from "../../../../../commum/richText";
 import type { Chamado } from "../Components/types";
 
 interface UseChamadosProps {

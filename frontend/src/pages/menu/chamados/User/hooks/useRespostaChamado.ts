@@ -1,9 +1,9 @@
 import { useState } from "react";
-import api from "../../../../api";
+import api from "../../../../../api";
 import {
     sanitizeRichText,
     isRichTextEmpty,
-} from "../../../../commum/richText";
+} from "../../../../../commum/richText";
 
 import type { Chamado } from "../Components/types";
 

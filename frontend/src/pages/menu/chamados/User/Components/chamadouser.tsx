@@ -1,5 +1,5 @@
 import { FaRegClock, FaReply } from "react-icons/fa";
-import RichTextView from "../../../../commum/RichTextView";
+import RichTextView from "../../../../../commum/RichTextView";
 import type { Chamado,RespostaChamado } from "./types";
 
 interface ChamadoUserProps {

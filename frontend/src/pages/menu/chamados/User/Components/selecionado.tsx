@@ -1,5 +1,5 @@
-import RichTextEditor from "../../../../commum/RichTextEditor";
-import RichTextView from "../../../../commum/RichTextView";
+import RichTextEditor from "../../../../../commum/RichTextEditor";
+import RichTextView from "../../../../../commum/RichTextView";
 import { FaPaperPlane, FaTimes } from "react-icons/fa";
 import type { FormEvent, Dispatch, SetStateAction } from "react";
 import type {Chamado, RespostaChamado} from "./types"

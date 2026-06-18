@@ -1,6 +1,6 @@
-import Buttom from "../../../../commum/buttom";
+import Buttom from "../../../../../commum/buttom";
 import { FaTimes } from "react-icons/fa";
-import RichTextEditor from "../../../../commum/RichTextEditor";
+import RichTextEditor from "../../../../../commum/RichTextEditor";
 
 interface FormularioProps {
     titulo: string;

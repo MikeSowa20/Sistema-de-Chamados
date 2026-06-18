@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { FaPlus, FaTimes } from "react-icons/fa";
-import Mensagem from "../../../commum/mensagem";
+import Mensagem from "../../../../commum/mensagem";
 import ChamadoUser from "./Components/chamadouser";
 import Formulario from "./Components/formulario";
 import Selecionado from "./Components/selecionado";
@@ -24,18 +24,21 @@ export default function ChamadosUser({
     nome,
     user_id,
 }: ChamadosUserProps) {
+    const [viewResolvidos, setViewResolvidos] = useState(false)
+    const [viewEncerrados, setViewEncerrados] = useState(false)
+    const [viewAbertos,setViewAbertos]= useState(true)
     const [formAberto, setFormAberto] = useState(false);
     const [titulo, setTitulo] = useState("");
     const [corpo, setCorpo] = useState("");
     const [urgencia, setUrgencia] = useState("baixa");
     const [mensagem, setMensagem] = useState("");
     const [type, setType] = useState<"success" | "error" | null>(null);
-    const [chamadoRespondendo, setChamadoRespondendo] =useState<number | null>(null);
-    const {chamados,abrirChamado,atualizarChamados,} = useChamados({userId: user_id,});
-    const {abertos,resolvidos,encerrados,} = useChamadosFiltros(chamados);
-    const chamadoSelecionado = chamados.find((chamado) =>chamado.id === chamadoRespondendo);
-    const {respostaUsuario,setRespostaUsuario,responderChamado,salvandoResposta, 
-    } = useRespostaChamado({userId: user_id,chamadoSelecionado,atualizarChamados,});
+    const [chamadoRespondendo, setChamadoRespondendo] = useState<number | null>(null);
+    const { chamados, abrirChamado, atualizarChamados, } = useChamados({ userId: user_id, });
+    const { abertos, resolvidos, encerrados, } = useChamadosFiltros(chamados);
+    const chamadoSelecionado = chamados.find((chamado) => chamado.id === chamadoRespondendo);
+    const { respostaUsuario, setRespostaUsuario, responderChamado, salvandoResposta,
+    } = useRespostaChamado({ userId: user_id, chamadoSelecionado, atualizarChamados, });
 
     useEffect(() => {
         if (!mensagem) return;
@@ -171,46 +174,73 @@ export default function ChamadosUser({
                     <h2 className="text-lg font-bold text-gray-950">
                         Chamados abertos
                     </h2>
-                    <span className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600">
-                        {abertos.length}
-                    </span>
+                    <div className="flex gap-5">
+                        <span className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600">
+                            {abertos.length}
+                        </span>
+                        <button
+                            onClick={() => { setViewAbertos(!viewAbertos) }}
+                            className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600 hover:bg-gray-100 cursor-pointer"
+                        >
+                            {viewAbertos == true ? "Ocultar" : "Mostrar"}
+                        </button>
+                    </div>
                 </div>
-
-                {abertos.map((chamado) => (
-                    <ChamadoUser
-                        key={chamado.id}
-                        chamado={chamado}
-                        formatarDataAbertura={
-                            formatarDataAbertura
-                        }
-                        abrirRespostaUsuario={
-                            abrirRespostaUsuario
-                        }
-                    />
-                ))}
+                {viewAbertos ?
+                <div>
+                    {abertos.map((chamado) => (
+                        <ChamadoUser
+                            key={chamado.id}
+                            chamado={chamado}
+                            formatarDataAbertura={
+                                formatarDataAbertura
+                            }
+                            abrirRespostaUsuario={
+                                abrirRespostaUsuario
+                            }
+                        />
+                    ))}
+                </div>
+                :
+                    <hr className="text-gray-600"></hr>
+                }
             </section>
             <section className="space-y-3">
                 <div className="flex items-center justify-between">
                     <h2 className="text-lg font-bold text-gray-950">
                         Chamados resolvidos
                     </h2>
-
-                    <span className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600">
-                        {resolvidos.length}
-                    </span>
+                    <div className="flex gap-5">
+                        <span className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600 flex justify-center items-center">
+                            <p>{resolvidos.length}</p>
+                        </span>
+                        <button
+                            onClick={() => { setViewResolvidos(!viewResolvidos) }}
+                            className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600 hover:bg-gray-100 cursor-pointer"
+                        >
+                            {viewResolvidos == true ? "Ocultar" : "Mostrar"}
+                        </button>
+                    </div>
                 </div>
-                {resolvidos.map((chamado) => (
-                    <ChamadoUser
-                        key={chamado.id}
-                        chamado={chamado}
-                        formatarDataAbertura={
-                            formatarDataAbertura
-                        }
-                        abrirRespostaUsuario={
-                            abrirRespostaUsuario
-                        }
-                    />
-                ))}
+                {viewResolvidos ?
+                    <div>
+                        {resolvidos.map((chamado) => (
+                            <ChamadoUser
+                                key={chamado.id}
+                                chamado={chamado}
+                                formatarDataAbertura={
+                                    formatarDataAbertura
+                                }
+                                abrirRespostaUsuario={
+                                    abrirRespostaUsuario
+                                }
+                            />
+                        ))}
+                    </div>
+                    :
+                    <hr className="text-gray-600"></hr>
+                }
+
             </section>
 
             <section className="space-y-3">
@@ -219,19 +249,33 @@ export default function ChamadosUser({
                         Chamados encerrados
                     </h2>
 
-                    <span className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600">
-                        {encerrados.length}
-                    </span>
+                    <div className="flex gap-5">
+                        <span className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600 flex justify-center items-center">
+                            {encerrados.length}
+                        </span>
+                        <button
+                                onClick={() => { setViewEncerrados(!viewEncerrados) }}
+                                className="border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-gray-600 hover:bg-gray-100 cursor-pointer"
+                            >
+                                {viewEncerrados == true ? "Ocultar" : "Mostrar"}
+                        </button>
+                    </div>
                 </div>
 
-                {encerrados.map((chamado) => (
-                    <ChamadoUser
-                        key={chamado.id}
-                        chamado={chamado}
-                        formatarDataAbertura={formatarDataAbertura}
-                        abrirRespostaUsuario={abrirRespostaUsuario}
-                    />
-                ))}
+                {viewEncerrados ?
+                    <div>
+                        {encerrados.map((chamado) => (
+                            <ChamadoUser
+                                key={chamado.id}
+                                chamado={chamado}
+                                formatarDataAbertura={formatarDataAbertura}
+                                abrirRespostaUsuario={abrirRespostaUsuario}
+                            />
+                        ))}
+                    </div>
+                    :
+                    <hr className="text-gray-600"></hr>
+                }
             </section>
 
             {chamadoSelecionado && (
