@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Além do README principal, recomendo adicionar no topo alguns badges para deixar seu GitHub mais profissional:
 
-Currently, two official plugins are available:
+```md
+![React](https://img.shields.io/badge/React-19-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-blue)
+![Flask](https://img.shields.io/badge/Flask-black)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-red)
+![License](https://img.shields.io/badge/license-MIT-green)
+```
+# 📋 Sistema de Chamados
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Sistema web de gerenciamento de chamados desenvolvido para facilitar a comunicação entre usuários e administradores, permitindo a abertura, acompanhamento e resolução de solicitações de forma organizada.
 
-## React Compiler
+## 🚀 Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Usuário
+- Criar chamados
+- Visualizar chamados enviados
+- Acompanhar status dos chamados
+- Reabrir chamados resolvidos
+- Adicionar respostas aos chamados
+- Editar informações do perfil
 
-## Expanding the ESLint configuration
+### Administrador
+- Visualizar todos os chamados
+- Filtrar chamados por status e período
+- Responder chamados
+- Alterar status dos chamados
+- Gerenciar usuários
+- Acessar métricas e informações do sistema
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tecnologias Utilizadas
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Front-end
+- React
+- TypeScript
+- React Router
+- Axios
+- React Icons
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Back-end
+- Flask
+- SQLAlchemy
+- Flask-Bcrypt
+- JWT Authentication
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Banco de Dados
+- SQLite (desenvolvimento)
+- Compatível com outros bancos suportados pelo SQLAlchemy
+
+## 📂 Estrutura do Projeto
+
+```bash
+Sistema-Chamados/
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+├── backend/
+│   ├── routes/
+│   ├── models/
+│   ├── config/
+│   ├── app.py
+│   └── requirements.txt
+│
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+##🔐 Controle de Acesso
+O sistema possui autenticação baseada em JWT e controle de permissões para:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Usuários comuns
+- Administradores
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+As rotas administrativas são protegidas para impedir acesso não autorizado.
