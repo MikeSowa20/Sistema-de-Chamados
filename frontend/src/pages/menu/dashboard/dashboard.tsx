@@ -1,22 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { FaChartBar, FaCheckCircle, FaClock, FaExclamationTriangle, FaFolderOpen, FaRedo } from "react-icons/fa";
+import { FaExclamationTriangle } from "react-icons/fa";
 import api from "../../../api";
-
-interface DashboardData {
-    total: number;
-    status: {
-        abertos: number;
-        encerrados: number;
-        reabertos: number;
-        resolvidos: number;
-    };
-    urgencia: {
-        alta: number;
-        baixa: number;
-        media: number;
-        urgente: number;
-    };
-}
+import Tabela from "./components/tabelas";
+import type { DashboardData } from "./types/type";
+import Cards from "./components/cards";
+import SeletorPeriodo from "./components/seletorPeriodo";
 
 const dadosVazios: DashboardData = {
     total: 0,
@@ -88,12 +76,6 @@ const obterIntervalo = (periodo: string, inicioPersonalizado: string, fimPersona
     };
 }
 
-const calcularPercentual = (valor: number, total: number) => {
-    if (!total) return 0;
-
-    return Math.min(100, Math.round((valor / total) * 100));
-}
-
 export default function Dashboard(){
     const [periodo, setPeriodo] = useState("mes");
     const [inicioPersonalizado, setInicioPersonalizado] = useState(formatarDataInput(somarDias(new Date(), -7)));
@@ -137,38 +119,6 @@ export default function Dashboard(){
         atualizarDashboard();
     }, [intervalo.dataInicio, intervalo.dataFim]);
 
-    const cards = [
-        {
-            label: "Total",
-            valor: dados.total,
-            icon: <FaChartBar />,
-            className: "bg-gray-950 text-white",
-        },
-        {
-            label: "Abertos",
-            valor: dados.status.abertos,
-            icon: <FaFolderOpen />,
-            className: "bg-teal-700 text-white",
-        },
-        {
-            label: "Resolvidos",
-            valor: dados.status.resolvidos,
-            icon: <FaCheckCircle />,
-            className: "bg-emerald-700 text-white",
-        },
-        {
-            label: "Encerrados",
-            valor: dados.status.encerrados,
-            icon: <FaClock />,
-            className: "bg-gray-700 text-white",
-        },
-        {
-            label: "Reabertos",
-            valor: dados.status.reabertos,
-            icon: <FaRedo />,
-            className: "bg-amber-600 text-white",
-        },
-    ];
 
     const statusResumo = [
         { label: "Abertos", valor: dados.status.abertos, color: "bg-teal-700" },
@@ -193,54 +143,16 @@ export default function Dashboard(){
                     <p className="text-sm text-gray-500">Indicadores de chamados por período.</p>
                 </div>
 
-                <div className="flex flex-col gap-2 md:flex-row md:items-end">
-                    <div>
-                        <label htmlFor="periodo" className="block text-xs font-bold uppercase text-gray-500">
-                            Período
-                        </label>
-                        <select
-                            id="periodo"
-                            value={periodo}
-                            onChange={(event) => setPeriodo(event.target.value)}
-                            className="mt-1 min-w-48 border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-gray-800 focus:border-teal-700 focus:outline-0"
-                        >
-                            {periodos.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                    {item.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                <SeletorPeriodo
+                    periodo = {periodo}
+                    setPeriodo = {setPeriodo}
+                    periodos = {periodos}
+                    inicioPersonalizado = {inicioPersonalizado}
+                    setInicioPersonalizado = {setInicioPersonalizado}
+                    fimPersonalizado = {fimPersonalizado}
+                    setFimPersonalizado = {setFimPersonalizado}
+                />
 
-                    {periodo === "custom" && (
-                        <div className="grid grid-cols-2 gap-2">
-                            <div>
-                                <label htmlFor="data-inicio" className="block text-xs font-bold uppercase text-gray-500">
-                                    De
-                                </label>
-                                <input
-                                    id="data-inicio"
-                                    type="date"
-                                    value={inicioPersonalizado}
-                                    onChange={(event) => setInicioPersonalizado(event.target.value)}
-                                    className="mt-1 w-40 border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-gray-800 focus:border-teal-700 focus:outline-0"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="data-fim" className="block text-xs font-bold uppercase text-gray-500">
-                                    Até
-                                </label>
-                                <input
-                                    id="data-fim"
-                                    type="date"
-                                    value={fimPersonalizado}
-                                    onChange={(event) => setFimPersonalizado(event.target.value)}
-                                    className="mt-1 w-40 border border-gray-300 bg-white px-3 py-2 text-sm font-bold text-gray-800 focus:border-teal-700 focus:outline-0"
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
@@ -260,17 +172,9 @@ export default function Dashboard(){
                 </div>
             ) : (
                 <>
-                    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-                        {cards.map((card) => (
-                            <div key={card.label} className={`p-4 shadow-sm ${card.className}`}>
-                                <div className="flex items-center justify-between gap-3">
-                                    <p className="text-sm font-bold opacity-90">{card.label}</p>
-                                    <span className="text-lg">{card.icon}</span>
-                                </div>
-                                <p className="mt-4 text-3xl font-bold">{card.valor}</p>
-                            </div>
-                        ))}
-                    </div>
+                    <Cards
+                        dados={dados}
+                    />
 
                     <div className="grid gap-4 xl:grid-cols-2">
                         <section className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
@@ -280,21 +184,10 @@ export default function Dashboard(){
                             </div>
 
                             <div className="mt-5 space-y-4">
-                                {statusResumo.map((item) => {
-                                    const percentual = calcularPercentual(item.valor, dados.total);
-
-                                    return (
-                                        <div key={item.label}>
-                                            <div className="mb-1 flex items-center justify-between text-sm">
-                                                <span className="font-bold text-gray-700">{item.label}</span>
-                                                <span className="text-gray-500">{item.valor}</span>
-                                            </div>
-                                            <div className="h-3 bg-gray-100">
-                                                <div className={`h-full ${item.color}`} style={{ width: `${percentual}%` }} />
-                                            </div>
-                                        </div>
-                                    )
-                                })}
+                                <Tabela
+                                    dados={dados}
+                                    config={statusResumo}
+                                />
                             </div>
                         </section>
 
@@ -305,21 +198,11 @@ export default function Dashboard(){
                             </div>
 
                             <div className="mt-5 space-y-4">
-                                {urgenciaResumo.map((item) => {
-                                    const percentual = calcularPercentual(item.valor, dados.total);
-
-                                    return (
-                                        <div key={item.label}>
-                                            <div className="mb-1 flex items-center justify-between text-sm">
-                                                <span className="font-bold text-gray-700">{item.label}</span>
-                                                <span className="text-gray-500">{item.valor}</span>
-                                            </div>
-                                            <div className="h-3 bg-gray-100">
-                                                <div className={`h-full ${item.color}`} style={{ width: `${percentual}%` }} />
-                                            </div>
-                                        </div>
-                                    )
-                                })}
+                                
+                                <Tabela
+                                    dados={dados}
+                                    config={urgenciaResumo}
+                                />
                             </div>
                         </section>
                     </div>

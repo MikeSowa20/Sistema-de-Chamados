@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react"
 import { FaEye, FaPaperPlane, FaRegClock, FaReply, FaTimes, FaUserCircle } from "react-icons/fa";
-import Mensagem from "../../../commum/mensagem";
-import api from "../../../api"
-import RichTextEditor from "../../../commum/RichTextEditor";
-import RichTextView from "../../../commum/RichTextView";
-import { isRichTextEmpty, sanitizeRichText } from "../../../commum/richText";
+import Mensagem from "../../../../commum/mensagem";
+import api from "../../../../api"
+import RichTextEditor from "../../../../commum/RichTextEditor";
+import RichTextView from "../../../../commum/RichTextView";
+import { isRichTextEmpty, sanitizeRichText } from "../../../../commum/richText";
 
 interface chamadosAdminProps{
     nome:string | undefined

@@ -1,7 +1,7 @@
 
 import Loading from "../../../commum/loading";
 import useVerifyAdmin from "../hook/verify_admin";
-import ChamadosAdmin from "./chamadosAdmin";
+import ChamadosAdmin from "./Admin/chamadosAdmin";
 import ChamadosUser from "./User/chamadosUser";
 
 export default function Chamados(){
