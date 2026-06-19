@@ -1,13 +1,26 @@
-```md
-![React](https://img.shields.io/badge/React-19-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-blue)
-![Flask](https://img.shields.io/badge/Flask-black)
-![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-red)
-![License](https://img.shields.io/badge/license-MIT-green)
 
 # 📋 Sistema de Chamados
 
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?logo=flask&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?logo=sqlalchemy&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?logo=jsonwebtokens&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)
+
 Sistema web de gerenciamento de chamados desenvolvido para facilitar a comunicação entre usuários e administradores, permitindo a abertura, acompanhamento e resolução de solicitações de forma organizada.
+<p align="center">
+  <img src="assets/demostracao.gif" width="900">
+</p>
+
+## ✨ Principais Recursos
+
+- 🔐 Autenticação com JWT
+- 👥 Controle de permissões (Usuário/Admin)
+- 🎫 Sistema completo de chamados
+- 🔄 Reabertura de chamados resolvidos
+- 📊 Dashboard administrativo
+- ⚡ API REST com Flask
 
 ## 🚀 Funcionalidades
 
@@ -26,6 +39,10 @@ Sistema web de gerenciamento de chamados desenvolvido para facilitar a comunica�
 - Alterar status dos chamados
 - Gerenciar usuários
 - Acessar métricas e informações do sistema
+
+<p align="center">
+  <img src="assets/dashboard.gif" width="900">
+</p>
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -48,7 +65,7 @@ Sistema web de gerenciamento de chamados desenvolvido para facilitar a comunica�
 
 ## 📂 Estrutura do Projeto
 
-```bash
+```
 Sistema-Chamados/
 │
 ├── frontend/
@@ -72,10 +89,18 @@ O sistema possui autenticação baseada em JWT e controle de permissões para:
 - Usuários comuns
 - Administradores
 
+<p align="center">
+  <img src="assets/login.gif" width="900">
+</p>
+
 As rotas administrativas são protegidas para impedir acesso não autorizado.
 
 
 ## 📊 Fluxo do Chamado
+
+<p align="center">
+  <img src="assets/edicao.gif" width="900">
+</p>
 ```
 Usuário cria chamado
           ↓
@@ -91,7 +116,6 @@ Usuário pode:
           ↓
 Administrador responde novamente
 ```
-
 
 ## ⚙️ Instalação
 ```
