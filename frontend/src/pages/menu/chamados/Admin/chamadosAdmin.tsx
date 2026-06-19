@@ -154,7 +154,7 @@ export default function ChamadosAdmin({
                                         status.value
                                     )
                                 }
-                                className={`border px-4 py-2 text-sm font-bold transition-colors ${
+                                className={`border px-4 py-2 text-sm font-bold transition-colors cursor-pointer ${
                                     ativo
                                         ? "border-teal-700 bg-teal-700 text-white"
                                         : "border-gray-200 bg-white text-gray-700 hover:bg-gray-100"
