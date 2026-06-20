@@ -5,6 +5,7 @@ from config.db import db
 from models.users import Users
 from models.chamados import Chamados, MensagensChamado
 from sqlalchemy import or_, and_
+from routes.mail import enviar_email
 
 chamados_bp = Blueprint("chamados",__name__)
 
@@ -238,6 +239,7 @@ def responderChamadoAdmin(chamado_id):
         chamado.quantidade_reaberturas += 1
 
     db.session.commit()
+    enviar_email(chamado_id)
 
     return jsonify({
         "mensagem": "Chamado atualizado.",

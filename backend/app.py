@@ -1,6 +1,7 @@
 from flask import Flask
 from config.db import db, DATABASE_URL
 from flask_cors import CORS
+import os
 
 from routes.login import login_bp
 from routes.register import register_bp
@@ -8,6 +9,7 @@ from routes.auth import auth_bp
 from routes.usuarios import usuarios_bp
 from routes.chamados import chamados_bp
 from routes.dashboard import dashboard_bp
+from config.mail import configurar_mail
 
 app = Flask(__name__)
 
@@ -18,6 +20,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
+configurar_mail(app)
 
 app.register_blueprint(login_bp)
 app.register_blueprint(register_bp)
